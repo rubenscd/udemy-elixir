@@ -8,9 +8,13 @@ defmodule Cards do
 
   ## Examples
 
-      iex> baralho = Cards.create_deck
-      iex> baralho
-      ["A♦", "A♠", "A♥", "A♣", "2♦", "2♠", "2♥", "2♣", "3♦", "3♠", ...]
+      iex> Cards.create_deck
+      ["A♦", "2♦", "3♦", "4♦", "5♦", "6♦", "7♦", "8♦", "9♦",
+      "10♦", "J♦", "Q♦", "K♦", "A♠", "2♠", "3♠", "4♠", "5♠",
+      "6♠", "7♠", "8♠", "9♠", "10♠", "J♠", "Q♠", "K♠", "A♥",
+      "2♥", "3♥", "4♥", "5♥", "6♥", "7♥", "8♥", "9♥", "10♥",
+      "J♥", "Q♥", "K♥", "A♣", "2♣", "3♣", "4♣", "5♣", "6♣",
+      "7♣", "8♣", "9♣", "10♣", "J♣", "Q♣", "K♣"]
 
   """
   def create_deck do
@@ -40,9 +44,9 @@ defmodule Cards do
 
   ## Examples
 
-      iex> baralho = Cards.create_deck
-      iex> Cards.shuffle(baralho)
-      ["A♠", "3♣", "10♠", "2♣", "6♥", "8♣", "Q♣", "2♦", "6♣", ...]
+      iex> deck = Cards.create_deck
+      iex> Cards.shuffle(deck)
+      ["A♠", "3♣", "10♠", "2♣", "6♥", "8♣", "Q♣", "2♦", "6♣", ...()]
 
   """
   def shuffle(deck) do
@@ -54,8 +58,8 @@ defmodule Cards do
 
   ## Examples
 
-      iex> baralho = Cards.create_deck
-      iex> Cards.contains?(baralho, "1♠")
+      iex> deck = Cards.create_deck
+      iex> Cards.contains?(deck, "1♠")
       false
 
   """
@@ -64,28 +68,29 @@ defmodule Cards do
   end
 
   @doc """
-    prepara a mao de cartas
+    prepara uma mao de cartas com a quantidade solicitada pela variavel `hand_size`
 
   ## Examples
 
-    iex> baralho = Cards.create_deck
-    iex> {mao, baralho} = Cards.deal(baralho, 1)
-    iex> mao
+    iex> deck = Cards.create_deck
+    iex> {hand, _} = Cards.deal(deck, 1)
+    iex> hand
     ["A♦"]
 
   """
   def deal(deck, hand_size) do
-    # resultado sempre um tuple { [ mao ], [ baralho ] }
+    # resultado sempre um tuple { [ hand ], [ deck ] }
     Enum.split(deck, hand_size)
   end
 
   @doc """
-    salva o baralho atual
+    salva o baralho atual em formato binario
+    (arquivo localizado na raiz do projeto)
 
   ## Examples
 
-      iex> baralho = Cards.create_deck
-      iex> Cards.save(baralho, "meu_maco")
+      iex> deck = Cards.create_deck
+      iex> Cards.save(deck, "meu_maco")
       :ok
 
   """
@@ -95,11 +100,12 @@ defmodule Cards do
   end
 
   @doc """
-    recarrega um baralho salvo
+    recupera um baralho salvo anteriormente em formato binario
+    (arquivo localizado na raiz do projeto)
 
   ## Examples
 
-      iex> Cards.load(baralho, "meu_maco")
+      iex> Cards.load(deck(), "meu_maco")
       :ok
 
   """
@@ -125,8 +131,9 @@ defmodule Cards do
 
   ## Examples
 
-      iex> baralho = Cards.create_hand(3)
-      {["Q♦", "8♦", "2♥"], ["7♥", "7♦", "4♥", "8♥", "A♣", "7♠", "A♦", "2♦", "K♠", ...]}
+      iex> deck = Cards.create_hand(3)
+      iex> deck
+      {["Q♦", "8♦", "2♥"], ["7♥", "7♦", "4♥", "8♥", "A♣", "7♠", "A♦", "2♦", "K♠", ...()]}
 
   """
   def create_hand(hand_size) do
