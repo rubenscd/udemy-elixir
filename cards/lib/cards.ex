@@ -1,28 +1,143 @@
 defmodule Cards do
   @moduledoc """
-  Documentation for `Cards`.
+    Contem metodos que criam e manipulam um baralho de cartas
   """
 
   @doc """
-  Hello world.
+    Cria um baralho com a sequencia de cartas e naipes fornecida
 
   ## Examples
 
-      iex> Cards.hello()
-      :world
+      iex> baralho = Cards.create_deck
+      iex> baralho
+      ["A♦", "A♠", "A♥", "A♣", "2♦", "2♠", "2♥", "2♣", "3♦", "3♠", ...]
 
   """
-  # def hello do
-  #   :world
-  # end
-
-  # deck de cartas
   def create_deck do
-    ["Ace", "Two", "Three"]
+    # cartas
+    # values = ["Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King"]
+    # valores = ["Ás", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Valete", "Dama", "Rei", "Coringa"]
+    # suits = ["Diamonds", "Spades", "Hearts", "Clubs"]
+    # naipes = ["Ouros", "Espadas", "Copas", "Paus"]
+    values = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
+    suits = ["♦", "♠", "♥", "♣"]
+
+    # modo grosseiro de iterar um array com outro array
+    # cards = for value <- values do
+    #   for suit <- suits do
+    #     "#{value}#{suit}"
+    #   end
+    # end
+    # List.flatten(cards)
+
+    for suit <- suits, value <- values do
+      "#{value}#{suit}"
+    end
   end
 
-  # embaralha o deck de cartas
+  @doc """
+    embaralha o deck de cartas
+
+  ## Examples
+
+      iex> baralho = Cards.create_deck
+      iex> Cards.shuffle(baralho)
+      ["A♠", "3♣", "10♠", "2♣", "6♥", "8♣", "Q♣", "2♦", "6♣", ...]
+
+  """
   def shuffle(deck) do
-  
+    Enum.shuffle(deck)
+  end
+
+  @doc """
+    checa se uma carta esta no baralho
+
+  ## Examples
+
+      iex> baralho = Cards.create_deck
+      iex> Cards.contains?(baralho, "1♠")
+      false
+
+  """
+  def contains?(deck, card) do
+    Enum.member?(deck, card)
+  end
+
+  @doc """
+    prepara a mao de cartas
+
+  ## Examples
+
+    iex> baralho = Cards.create_deck
+    iex> {mao, baralho} = Cards.deal(baralho, 1)
+    iex> mao
+    ["A♦"]
+
+  """
+  def deal(deck, hand_size) do
+    # resultado sempre um tuple { [ mao ], [ baralho ] }
+    Enum.split(deck, hand_size)
+  end
+
+  @doc """
+    salva o baralho atual
+
+  ## Examples
+
+      iex> baralho = Cards.create_deck
+      iex> Cards.save(baralho, "meu_maco")
+      :ok
+
+  """
+  def save(deck, filename) do
+    binary = :erlang.term_to_binary(deck)
+    File.write(filename, binary)
+  end
+
+  @doc """
+    recarrega um baralho salvo
+
+  ## Examples
+
+      iex> Cards.load(baralho, "meu_maco")
+      :ok
+
+  """
+  def load(filename) do
+
+    # modo grosseiro de fazer
+    # { status, binary } = File.read(filename)
+    # evitando IF statment
+    # case status do
+    #   :ok -> :erlang.binary_to_term(binary)
+    #   :error -> "algo deu errado, arquivo não encontrado"
+    # end
+
+    case File.read(filename) do
+      {:ok, binary} -> :erlang.binary_to_term(binary)
+      # _ na frente de assign/variaveis faz com que ele viva durante o escopo do uso nao precisa ser declarada anteriormente
+      {:error, _reason} -> "algo deu errado, arquivo não encontrado"
+    end
+  end
+
+  @doc """
+    Cria o baralho, embaralha e já disponibiliza uma mao com a `hand_size` quantidade de cartas informadas
+
+  ## Examples
+
+      iex> baralho = Cards.create_hand(3)
+      {["Q♦", "8♦", "2♥"], ["7♥", "7♦", "4♥", "8♥", "A♣", "7♠", "A♦", "2♦", "K♠", ...]}
+
+  """
+  def create_hand(hand_size) do
+    # modo antiquado de usar uma sequencia de funcoes
+    # deck = Cards.create_deck
+    # deck = Cards.shuffle(deck)
+    # hand = Cards.deal(deck, hand_size)
+
+    # estilo de uso do pipe operator, automaticamente utiliza o primeiro argumento da funcao e repassa para sequencia, sempre como primeiro argumento
+    Cards.create_deck
+    |> Cards.shuffle
+    |> Cards.deal(hand_size)
   end
 end
